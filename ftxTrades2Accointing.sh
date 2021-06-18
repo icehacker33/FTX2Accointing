@@ -5,14 +5,33 @@
 # Desc:   Script to convert exported trades from FTX into a format compatible with Accointing.com
 #________________________________________________________________________________________________
 
-# FTX exported trades file
-FTXTRADESCSV="ftxTradesExport.csv"
+# Get script's name
+SNAME="$(basename $0)"
+
+_Usage()
+{
+cat << EOF
+Usage: $SNAME <ftxTradesExport.csv>
+EOF
+}
+
+##### MAIN #####
+if [[ $# != 1 ]]; then
+  _Usage;
+  exit 1;
+fi
+
+FTXTRADESCSV=$1
+
+if [[ ! -e $FTXTRADESCSV ]]; then
+  exit 2;
+fi
 
 # Input file with trades to be imported into Accointing.com
-ACCOINTINGTRADESCSV="accointingTradesImport.csv"
+ACCOINTINGTRADESCSV="$(echo "$FTXTRADESCSV" | awk '{sub(/\.csv/,"_accointing.csv",$1);print $1}')"
 
 # Force new line characters to be in Unix format
-unix2dos $FTXTRADESCSV
+dos2unix $FTXTRADESCSV &>/dev/null
 
 # AWK core transformation logic
 awk 'BEGIN{
@@ -70,4 +89,6 @@ awk 'BEGIN{
           }' $FTXTRADESCSV > $ACCOINTINGTRADESCSV
 
 # Force new line characters to be in Windows format
-unix2dos $ACCOINTINGTRADESCSV
+unix2dos $ACCOINTINGTRADESCSV &>/dev/null
+
+exit 0
