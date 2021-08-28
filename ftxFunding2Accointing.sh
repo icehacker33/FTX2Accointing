@@ -61,11 +61,12 @@ awk 'BEGIN{
             if(PAYMENT < 0)
             {
               gsub(/-/,"",PAYMENT);
-              printf ",,"PAYMENT",USD"
+              printf PAYMENT",USD,,";
+
             }
             else
             {
-              printf PAYMENT",USD,,";
+              printf ",,"PAYMENT",USD"
             }
             printf ",,,";
             if(TYPE < 0)
